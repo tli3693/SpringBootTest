@@ -1,7 +1,11 @@
 package com.troy.test.data.model;
 
-import org.springframework.data.annotation.Id;
+import java.util.Date;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class User {
@@ -12,7 +16,16 @@ public class User {
 	private String name;
 	private String email;
 	private String username;
+
+	@JsonIgnore
 	private String password;
+
+	@JsonIgnore
+	private Date dateModified;
+
+	@JsonIgnore
+	@DBRef(lazy = true)
+	private User modifiedBy;
 
 	public User(String name, String email, String username, String password) {
 		super();
@@ -20,6 +33,11 @@ public class User {
 		this.email = email;
 		this.username = username;
 		this.password = password;
+		this.dateModified = new Date();
+		this.modifiedBy = new User();
+
+		// TODO: Hard-coded setting as admin user
+		this.modifiedBy.setUserId("5af12285bb806b9ceddd8c96");
 	}
 
 	public User() {
@@ -74,6 +92,22 @@ public class User {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public Date getDateModified() {
+		return dateModified;
+	}
+
+	public void setDateModified(Date dateModified) {
+		this.dateModified = dateModified;
+	}
+
+	public User getModifiedBy() {
+		return modifiedBy;
+	}
+
+	public void setModifiedBy(User modifiedBy) {
+		this.modifiedBy = modifiedBy;
 	}
 
 }

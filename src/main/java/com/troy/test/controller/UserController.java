@@ -47,26 +47,21 @@ public class UserController extends GenericController {
 	@RequestMapping("/authenticate")
 	@ResponseBody
 	ResponseEntity<Map<String, Object>> loginUser(@RequestBody User user) throws Exception {
-		// TODO: Connect to MongoDB to register User
-		System.out.println("loginUser");
-		LOGGER.debug("loginUser");
+		System.out.println("Attempting to login user: " + user.getUsername() + "...");
 		if (user.getUsername() == null && user.getPassword() == null)
 			throw new Exception("Invalid username or password!");
 
+		User userFound = this.userService.getUserTest(user.getUsername());
+
 		HttpHeaders responseHeaders = new HttpHeaders();
 		responseHeaders.set("MyResponseHeader", "MyValue");
+
 		Map<String, Object> responseBody = new HashMap<>();
 		responseBody.put("success", Boolean.TRUE);
 		responseBody.put("token", jwtUtil.generateToken(user));
+		responseBody.put("user", userFound);
 
-		// TODO: Remove temp code
-		user.setName("Troy Li");
-		user.setEmail("troy@test.com");
-		responseBody.put("user", user);
-
-		this.userService.getUserTest(user.getUsername());
-
-		System.out.println(user);
+		System.out.println(userFound);
 		return new ResponseEntity<Map<String, Object>>(responseBody, responseHeaders, HttpStatus.CREATED);
 	}
 }
